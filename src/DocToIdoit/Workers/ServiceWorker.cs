@@ -25,6 +25,7 @@ namespace DocToIdoit
         private readonly Timer _timer;
         private readonly IServiceProvider _services;
         private readonly IConfiguration _configuration;
+        private bool _operationRunning;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceWorker"/> class.
@@ -41,7 +42,7 @@ namespace DocToIdoit
             _logger.LogInformation("IHostLifetime: {hostLifetime}", lifetime.GetType());
             _configuration = configuration;
             _services = services;
-            _timer = new Timer(CheckForFiles);
+            _timer = new Timer(new TimerCallback(CheckForFiles));
             _timer.Change(1000, 30000);
             Installation.LicenseKey = _configuration["Ocr:License"];
             _logger.LogInformation("IronOCR license is valid: " + Installation.IsLicensed);
@@ -69,6 +70,10 @@ namespace DocToIdoit
         /// </summary>
         private async void CheckForFiles(object state)
         {
+            //avoid checking for new files if a past operation is running
+            if (_operationRunning)
+                return;
+            _operationRunning = true;
             _logger.LogDebug("Checking for new files");
             var newFiles = Directory.GetFiles(_configuration["Watcher:ScanPath"], "*.pdf");
             var async = _configuration.GetValue<bool>("Watcher:ProcessAsync");
@@ -80,6 +85,7 @@ namespace DocToIdoit
                 else
                     await ProcessFile(v);
             }
+            _operationRunning = false;
         }
 
         /// <summary>
