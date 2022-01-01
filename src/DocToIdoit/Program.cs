@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace DocToIdoit
 {
@@ -22,6 +23,7 @@ namespace DocToIdoit
                     services.AddScoped<IOcrWorker, OcrWorker>();
                     services.AddScoped<IIdoitWorker, IdoitWorker>();
                     services.AddScoped<ISmtpWorker, SmtpWorker>();
+                    services.Configure<List<Product>>(hostContext.Configuration.GetSection("Ocr:SupportedProducts"));
                     services.AddLogging(loggingBuilder =>
                     {
                         var loggingSection = hostContext.Configuration.GetSection("Logging");

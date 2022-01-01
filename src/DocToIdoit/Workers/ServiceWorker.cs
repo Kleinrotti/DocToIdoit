@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.Systemd;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,6 +26,7 @@ namespace DocToIdoit
         private readonly Timer _timer;
         private readonly IServiceProvider _services;
         private readonly IConfiguration _configuration;
+        private readonly IOptionsMonitor<List<Product>> _productOptionsMonitor;
         private bool _operationRunning;
 
         /// <summary>
@@ -34,14 +36,16 @@ namespace DocToIdoit
         /// <param name="configuration"></param>
         /// <param name="services"></param>
         /// <param name="lifetime"></param>
+        /// <param name="productOptionsMonitor"></param>
         public ServiceWorker(ILogger<ServiceWorker> logger, IConfiguration configuration,
-            IServiceProvider services, IHostLifetime lifetime)
+            IServiceProvider services, IHostLifetime lifetime, IOptionsMonitor<List<Product>> productOptionsMonitor)
         {
             _logger = logger;
             _logger.LogInformation("IsSystemd: {isSystemd}", lifetime.GetType() == typeof(SystemdLifetime));
             _logger.LogInformation("IHostLifetime: {hostLifetime}", lifetime.GetType());
             _configuration = configuration;
             _services = services;
+            _productOptionsMonitor = productOptionsMonitor;
             _timer = new Timer(new TimerCallback(CheckForFiles));
             _timer.Change(1000, 30000);
             Installation.LicenseKey = _configuration["Ocr:License"];
@@ -172,8 +176,7 @@ namespace DocToIdoit
         private IList<Product> ExtractProducts(OcrResult ocr)
         {
             var list = new List<Product>();
-
-            var supportedItems = _configuration.GetSection("Ocr:SupportedProducts").Get<Product[]>();
+            var supportedItems = _productOptionsMonitor.CurrentValue;
             var pages = ocr.Pages;
 
             //loop through all pages of the file
