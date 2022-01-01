@@ -187,6 +187,11 @@ namespace DocToIdoit
                     _logger.LogWarning($"Date not detected in ocr page {pIndex + 1}");
                     continue; //skip this page
                 }
+                if (!DateTime.TryParse(dateMatch.Value, out var parsedDate))
+                {
+                    _logger.LogWarning($"Date failed to parse in ocr page {pIndex + 1}");
+                    continue;
+                }
                 if (!noteMatch.Success)
                 {
                     _logger.LogWarning($"Delivery note not detected in ocr page {pIndex + 1}");
@@ -244,7 +249,7 @@ namespace DocToIdoit
                             count++;
                             var p = new Product
                             {
-                                OrderDate = DateTime.Parse(dateMatch.Value),
+                                OrderDate = parsedDate,
                                 DeliveryNote = noteMatch.Value,
                                 SerialNumer = s,
                                 Type = v.Type,
