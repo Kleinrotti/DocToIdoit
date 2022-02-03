@@ -14,5 +14,6 @@ namespace DocToIdoit
         public string Type { get; set; }
         public int Template { get; set; }
         public string IdoitPrefix { get; set; }
+        public string TicketId { get; set; }
     }
 }

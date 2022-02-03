@@ -48,7 +48,7 @@ namespace DocToIdoit
             try
             {
                 objectRequest.Type = product.Type;
-                objectRequest.Value = product.IdoitPrefix + DateTime.Now.Ticks;
+                objectRequest.Value = product.IdoitPrefix + DateTime.Now.Ticks + $"-{product.TicketId}";
                 objectRequest.Template = product.Template;
                 objectId = objectRequest.Create();
                 _logger.LogDebug($"Idoit object {objectRequest.Type} with value {objectRequest.Value} created");

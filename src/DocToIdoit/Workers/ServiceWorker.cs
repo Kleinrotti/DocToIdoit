@@ -2,7 +2,6 @@ using IronOcr;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Hosting.Systemd;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -41,7 +40,6 @@ namespace DocToIdoit
             IServiceProvider services, IHostLifetime lifetime, IOptionsMonitor<List<Product>> productOptionsMonitor)
         {
             _logger = logger;
-            _logger.LogInformation("IsSystemd: {isSystemd}", lifetime.GetType() == typeof(SystemdLifetime));
             _logger.LogInformation("IHostLifetime: {hostLifetime}", lifetime.GetType());
             _configuration = configuration;
             _services = services;
@@ -185,6 +183,15 @@ namespace DocToIdoit
                 //check if the values are valid and exists
                 var dateMatch = new Regex(_configuration["Ocr:DateDetectionRegex"]).Match(ocr.Pages[pIndex].Text);
                 var noteMatch = new Regex(_configuration["Ocr:DeliveryNoteDetectionRegex"]).Match(ocr.Pages[pIndex].Text);
+                var ticketIdMatch = new Regex(_configuration["Ocr:TicketIdDetectionRegex"]).Match(ocr.Pages[pIndex].Text);
+                string ticketid;
+                if (!ticketIdMatch.Success)
+                {
+                    _logger.LogWarning($"No ticket id detected in ocr page {pIndex + 1}");
+                    ticketid = string.Empty;
+                }
+                else
+                    ticketid = ticketIdMatch.Value;
                 if (!dateMatch.Success)
                 {
                     _logger.LogWarning($"Date not detected in ocr page {pIndex + 1}");
@@ -258,7 +265,8 @@ namespace DocToIdoit
                                 Type = v.Type,
                                 IdoitPrefix = v.IdoitPrefix,
                                 ProductName = v.ProductName,
-                                Template = v.Template
+                                Template = v.Template,
+                                TicketId = ticketid
                             };
                             list.Add(p);
                         }
