@@ -28,8 +28,11 @@ DocToIdoit uses [IronOCR](https://ironsoftware.com/csharp/ocr) as ocr engine. If
 
 > ## Requirements
 ### Operating system
-- Linux Distribution e.g., Debian/Ubuntu
+- Linux Distribution e.g., Debian/Ubuntu or Windows
 - Packages: dotnet-runtime-6.0, libgdiplus, libc6-dev
+### i-doit
+- Running i-doit installation (>=1.17)
+- i-doit API Addon
 ### PDF
 - PDFs should have least a resolution of 300 dpi
 - PDFs should not be compressed to heavily, the better the quality of the PDF and source document, the more reliable the ocr result.
@@ -40,10 +43,48 @@ DocToIdoit uses [IronOCR](https://ironsoftware.com/csharp/ocr) as ocr engine. If
  - Create a new user which will be used to run DocToIdoit (Do NOT use root as user)
  - Edit the appsettings.json as your needs
  ###  Documents folder
- - Make sure that your folder for scanned documents has the right permissions, read and write permission for the user which is used for DocToIdoit
+ - Make sure that your folder for scanned documents has read and write permission for the user which is used for DocToIdoit
  - Create a SMB share or FTP share for the scan folder which is set in the appsettings.json
  - Make sure that new files which are written by SMB or FTP are locked during write/send, otherwise it could happen that DocToIdoit tries to process the new file before write process is finished
  - DocToIdoit will process new files every 30 sec. automatically in that folder
  ###  Usage
  - Start the application with “dotnet DocToIdoit.dll”
  - Recommended: Create a systemd service to start it automatically (a sample file is included in the repository)
+ - Scan your documents as PDF to the scan folder via SMB/FTP or any other protocol
+ - For each serial number in the document an object will be created in i-doit, if it's added in the appsettings.json under SupportedProducts
+
+
+## appsettings.json Matrix
+| Property   |      Description      |  Required |  Default | Type |
+|------------|:---------------------:|----------:|---------:|-----:|
+| File.Path |  Log file name | Yes | - | string |
+| Watcher.ScanPath |    Listen for new files in this directory   |   Yes | - | string |
+| Watcher.ProcessingPath | Files will be moved there while processing |    Yes | - | string |
+| Watcher.ErrorScanPath |  Files will be moved there on errors | Yes | - | string |
+| Watcher.OcrResultPath |  After ocr finished, a text file will be created there | Yes | - | string |
+| Watcher.ProcessAsync |  Process multiple files in parallel. More RAM and CPU needed. | Yes | False | bool |
+| Idoit.Server |  URL to your i-doit Server API | Yes | - | string |
+| Idoit-ApiKey |  i-doit Addon api key | Yes | - | string |
+| Smtp.MailOnError |  Send an email on processing errors | No | False | bool |
+| Smtp.Server |  Smtp Server IP | No | - | string |
+| Smtp.Port |  Smtp Server Port | No | 25 | int |
+| Smtp.Subject |  Subject of the email | No | - | string |
+| Smtp.From |  Sender of the email | No | - | string |
+| Smtp.To |  Recipient of the email | No | - | string |
+| Ocr.ScanDPI |  DPI of scanned PDFs | Yes | 300 | int |
+| Ocr.Scale |  Scaling of the PDF | Yes | 300 | int |
+| Ocr.Deskew |  Correct rotation of the PDF | Yes | True | bool |
+| Ocr.License |  IronOCR license key | No | - | string |
+| Ocr.DeliveryNoteDetectionRegex |  Regex to detect the delivery note number | Yes | (LIEF).\\d* | string |
+| Ocr.DateDetectionRegex |  Regex to detect the date | Yes | \\d{2}.\\d{2}.\\d{4} | string |
+| Ocr.SerialDelimiter |  Delimeter between serial numbers | Yes | , | string |
+| Ocr.SerialIndicators |  Indicators to detect the lines where serial number are listed | Yes | S/N: | string[] |
+| Ocr.SupportedProducts |  Array of supported products | No | - | object[] |
+
+## appsettings.json SupportedProducts
+| Property   |      Description      |  Required |  Default | Type |
+|------------|:---------------------:|----------:|---------:|-----:|
+| ProductName |  Search string to find the product in the document | Yes | - | string |
+| Type |  i-doit object type | Yes | C__OBJTYPE__MONITOR | string |
+| IdoitPrefix |  Prefix for the i-doit object, after the prefix a timestamp will be added | Yes | - | string |
+| Template |  Template ID from i-doit which should be used | Yes | - | int |
