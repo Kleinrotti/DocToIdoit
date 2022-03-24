@@ -208,6 +208,8 @@ namespace DocToIdoit
                     continue; //skip this page
                 }
                 var count = 0;
+                var serialIndicators = _configuration.GetSection("Ocr:SerialIndicators").Get<string[]>();
+                var serialDelimiter = _configuration["Ocr:SerialDelimiter"];
                 //loop through each product from the configuration file
                 foreach (var v in supportedItems)
                 {
@@ -223,7 +225,6 @@ namespace DocToIdoit
                         //search further lines for serial numbers
                         for (int s = lIndex + 1; s < lines.Length; s++)
                         {
-                            var serialIndicators = _configuration.GetSection("Ocr:SerialIndicators").Get<string[]>();
                             //check if the line contains a serial indicator from the configuration
                             foreach (var indicator in serialIndicators)
                             {
@@ -239,7 +240,6 @@ namespace DocToIdoit
                         if (serialIndex == -1)
                             continue;
                         List<string> serials = new();
-                        var serialDelimiter = _configuration["Ocr:SerialDelimiter"];
                         do
                         {
                             //serials begin after the last char of the indicator, remove spaces, new lines and delimiters
