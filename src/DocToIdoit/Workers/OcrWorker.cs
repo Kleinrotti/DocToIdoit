@@ -1,4 +1,5 @@
 ﻿using IronOcr;
+using IronOcr.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -16,12 +17,14 @@ namespace DocToIdoit
         private readonly ILogger<OcrWorker> _logger;
         private IronTesseract _ocrEngine;
         private readonly IConfiguration _configuration;
+        public event EventHandler<OcrProgresEventsArgs> ProgressChanged;
 
         public OcrWorker(ILogger<OcrWorker> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
             _ocrEngine = new IronTesseract();
+            _ocrEngine.OcrProgress += ProgressChanged;
             _ocrEngine.Language = OcrLanguage.GermanBest;
             _ocrEngine.Configuration.TesseractVersion = TesseractVersion.Tesseract5;
             //AI OCR only without font analysis

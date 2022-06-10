@@ -1,4 +1,6 @@
 ﻿using IronOcr;
+using IronOcr.Events;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -10,6 +12,11 @@ namespace DocToIdoit
     /// </summary>
     internal interface IOcrWorker
     {
+        /// <summary>
+        /// Progress of the OCR process.
+        /// </summary>
+        event EventHandler<OcrProgresEventsArgs> ProgressChanged;
+
         /// <summary>
         /// Start OCR process of a file.
         /// </summary>
