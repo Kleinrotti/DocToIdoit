@@ -187,7 +187,7 @@ namespace DocToIdoit
                 string ticketid;
                 if (!ticketIdMatch.Success)
                 {
-                    _logger.LogWarning($"No ticket id detected in ocr page {pIndex + 1}");
+                    _logger.LogInformation($"No ticket id detected in ocr page {pIndex + 1}");
                     ticketid = string.Empty;
                 }
                 else

@@ -24,11 +24,7 @@ namespace DocToIdoit
             _logger = logger;
             _configuration = configuration;
             _ocrEngine = new IronTesseract();
-            _ocrEngine.OcrProgress += ProgressChanged;
             _ocrEngine.Language = OcrLanguage.GermanBest;
-            _ocrEngine.Configuration.TesseractVersion = TesseractVersion.Tesseract5;
-            //AI OCR only without font analysis
-            _ocrEngine.Configuration.EngineMode = TesseractEngineMode.LstmOnly;
             _ocrEngine.Configuration.ReadBarCodes = false;
             _ocrEngine.Configuration.RenderSearchablePdfsAndHocr = false;
             _ocrEngine.Configuration.PageSegmentationMode = TesseractPageSegmentationMode.SingleColumn;
@@ -73,7 +69,9 @@ namespace DocToIdoit
                 if (_configuration.GetValue<bool>("Ocr:Deskew"))
                     input.Deskew();
                 input.EnhanceResolution(_configuration.GetValue<int>("Ocr:Scale"));
+                _ocrEngine.OcrProgress += ProgressChanged;
                 result = await _ocrEngine.ReadAsync(input);
+                _ocrEngine.OcrProgress -= ProgressChanged;
                 _logger.LogInformation($"Finished Ocr of file {path}. Confidence: {(int)result.Confidence}%");
             }
             catch (Exception ex)
