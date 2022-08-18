@@ -27,7 +27,6 @@ namespace DocToIdoit
             _ocrEngine.Language = OcrLanguage.GermanBest;
             _ocrEngine.Configuration.ReadBarCodes = false;
             _ocrEngine.Configuration.RenderSearchablePdfsAndHocr = false;
-            _ocrEngine.Configuration.PageSegmentationMode = TesseractPageSegmentationMode.SingleColumn;
             _logger.LogDebug("OcrWorker initialized");
         }
 
