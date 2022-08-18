@@ -17,6 +17,7 @@ namespace DocToIdoit
         private readonly ILogger<OcrWorker> _logger;
         private IronTesseract _ocrEngine;
         private readonly IConfiguration _configuration;
+
         public event EventHandler<OcrProgresEventsArgs> ProgressChanged;
 
         public OcrWorker(ILogger<OcrWorker> logger, IConfiguration configuration)
@@ -24,7 +25,14 @@ namespace DocToIdoit
             _logger = logger;
             _configuration = configuration;
             _ocrEngine = new IronTesseract();
-            _ocrEngine.Language = OcrLanguage.GermanBest;
+            var languageFile = _configuration.GetValue<string>("Ocr:CustomLanguageFile");
+            if (languageFile == string.Empty)
+                _ocrEngine.Language = OcrLanguage.GermanBest;
+            else
+            {
+                _logger.LogInformation($"Setting custom language file to {languageFile}");
+                _ocrEngine.UseCustomTesseractLanguageFile(languageFile);
+            }
             _ocrEngine.Configuration.ReadBarCodes = false;
             _ocrEngine.Configuration.RenderSearchablePdfsAndHocr = false;
             _logger.LogDebug("OcrWorker initialized");
