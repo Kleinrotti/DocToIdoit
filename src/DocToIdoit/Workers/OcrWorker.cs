@@ -3,8 +3,6 @@ using IronOcr.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
 
 namespace DocToIdoit
@@ -38,33 +36,6 @@ namespace DocToIdoit
             _logger.LogDebug("OcrWorker initialized");
         }
 
-        public async Task<IEnumerable<OcrResult>> RunOcrAsync(string path, Rectangle[] zones)
-        {
-            _logger.LogInformation($"Starting Ocr of file {path}");
-            var result = new List<OcrResult>();
-            try
-            {
-                for (int i = 0; i < zones.Length; i++)
-                {
-                    using var input = new OcrInput();
-                    //input.AddPdf(path, null, zones[i], _configuration.GetValue<int>("Ocr:ScanDpi"));
-                    input.AddPdf(path, null);
-                    if (_configuration.GetValue<bool>("Ocr:Deskew"))
-                        input.Deskew();
-                    input.EnhanceResolution(_configuration.GetValue<int>("Ocr:Scale"));
-                    var ocr = await _ocrEngine.ReadAsync(input);
-                    _logger.LogDebug($"Finished processing OCR zone {i} of file {path}. Confidence: {(int)ocr.Confidence}%");
-                    result.Add(ocr);
-                }
-                _logger.LogInformation($"Finished Ocr of file {path}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Ocr of file {path} failed");
-            }
-            return result;
-        }
-
         public async Task<OcrResult> RunOcrAsync(string path)
         {
             _logger.LogInformation($"Starting Ocr of file {path}");
@@ -75,7 +46,7 @@ namespace DocToIdoit
                 input.AddPdf(path, null);
                 if (_configuration.GetValue<bool>("Ocr:Deskew"))
                     input.Deskew();
-                input.EnhanceResolution(_configuration.GetValue<int>("Ocr:Scale"));
+                input.TargetDPI = _configuration.GetValue<int>("Ocr:Scale");
                 _ocrEngine.OcrProgress += ProgressChanged;
                 result = await _ocrEngine.ReadAsync(input);
                 _ocrEngine.OcrProgress -= ProgressChanged;

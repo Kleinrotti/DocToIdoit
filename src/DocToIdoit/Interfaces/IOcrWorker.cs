@@ -21,14 +21,6 @@ namespace DocToIdoit
         /// Start OCR process of a file.
         /// </summary>
         /// <param name="path">Path to the file which should be processed.</param>
-        /// <param name="zones">Zones to be processed.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/>, one entry for each zone.</returns>
-        Task<IEnumerable<OcrResult>> RunOcrAsync(string path, Rectangle[] zones = null);
-
-        /// <summary>
-        /// Start OCR process of a file.
-        /// </summary>
-        /// <param name="path">Path to the file which should be processed.</param>
         /// <returns>An <see cref="OcrResult"/></returns>
         Task<OcrResult> RunOcrAsync(string path);
     }
