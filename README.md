@@ -53,6 +53,11 @@ DocToIdoit uses [IronOCR](https://ironsoftware.com/csharp/ocr) as ocr engine. If
  - Scan your documents as PDF to the scan folder via SMB/FTP or any other protocol
  - For each serial number in the document an object will be created in i-doit, if it's added in the appsettings.json under SupportedProducts
 
+## Performance
+I recommend 2 CPU cores and 2 GB RAM as minimum. You can calculate around 100MB per processed page.
+If you have large PDFs with many pages or if you turn on parallel processing, ensure you have enough RAM.
+
+
 
 ## appsettings.json Matrix
 | Property   |      Description      |  Required |  Default | Type |
@@ -71,7 +76,6 @@ DocToIdoit uses [IronOCR](https://ironsoftware.com/csharp/ocr) as ocr engine. If
 | Smtp.Subject |  Subject of the email | No | - | string |
 | Smtp.From |  Sender of the email | No | - | string |
 | Smtp.To |  Recipient of the email | No | - | string |
-| Ocr.ScanDPI |  DPI of scanned PDFs | Yes | 300 | int |
 | Ocr.Scale |  Scaling of the PDF | Yes | 300 | int |
 | Ocr.Deskew |  Correct rotation of the PDF | Yes | True | bool |
 | Ocr.License |  IronOCR license key | No | - | string |
