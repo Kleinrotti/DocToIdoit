@@ -26,10 +26,10 @@ jobs:
     - name: Build Linux-x64
       run: dotnet publish src/DocToIdoit/DocToIdoit.csproj -p:PublishProfile=Linux-X64
     - name: Zip files
-    - uses: montudor/action-zip@v1
-      with:
-        args: zip -qq -r DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-linux
-        args: zip -qq -r DocToIdoit-windows-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-win
+      uses: montudor/action-zip@v1
+      run: |
+        zip -qq -r DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-linux
+        zip -qq -r DocToIdoit-windows-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-win
     - name: Upload aritifacts
     - uses: actions/upload-artifact@v3
       with:
