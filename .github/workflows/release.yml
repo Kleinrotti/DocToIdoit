@@ -12,8 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
     - name: Set version env
-      uses: actions/checkout@v3
       run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -23,27 +23,32 @@ jobs:
       run: dotnet restore src/DocToIdoit/DocToIdoit.csproj
     - name: Build Windows-x64
       run: dotnet publish src/DocToIdoit/DocToIdoit.csproj -p:PublishProfile=Windows-X64
+    - uses: montudor/action-zip@v1
+      with:
+        args: zip -qq -r DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-win
+    - uses: actions/upload-artifact@v3
+      with:
+        path: DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
+        name: DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
     - name: Build Linux-x64
       run: dotnet publish src/DocToIdoit/DocToIdoit.csproj -p:PublishProfile=Linux-X64
     - uses: montudor/action-zip@v1
       with:
-        args: zip -qq -r DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-linux && zip -qq -r DocToIdoit-windows-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-win
+        args: zip -qq -r DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-linux
     - uses: actions/upload-artifact@v3
       with:
-        path: |
-          DocToIdoit-windows-x64-${{ env.RELEASE_VERSION }}.zip
-          DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
-        name: DocToIdoit
+        path: DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
+        name: DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
   release:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Set version env
-        uses: actions/checkout@v3
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: Release files
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            DocToIdoit-windows-x64-${{ env.RELEASE_VERSION }}.zip
+            DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
             DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
