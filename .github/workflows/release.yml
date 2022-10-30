@@ -22,7 +22,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src/DocToIdoit.sln
     - name: Build Windows-x64
-      run: dotnet publish src/DocToIdoit.sln -p:PublishProfile=Windows-X64 --no-restore
+      run: dotnet publish src/DocToIdoit.sln --framework net6.0 --configuration Release -p:PublishProfile=Windows-X64 --no-restore
     - uses: montudor/action-zip@v1
       with:
         args: zip -qq -r DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-win
@@ -30,7 +30,7 @@ jobs:
       with:
         name: DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
     - name: Build Linux-x64
-      run: dotnet publish src/DocToIdoit.sln -p:PublishProfile=Linux-X64 --no-restore
+      run: dotnet publish src/DocToIdoit.sln --framework net6.0 --configuration Release -p:PublishProfile=Linux-X64 --no-restore
     - uses: montudor/action-zip@v1
       with:
         args: zip -qq -r DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-linux
