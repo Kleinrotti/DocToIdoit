@@ -23,20 +23,20 @@ jobs:
       run: dotnet restore src/DocToIdoit/DocToIdoit.csproj
     - name: Build Windows-x64
       run: dotnet publish src/DocToIdoit/DocToIdoit.csproj -p:PublishProfile=Windows-X64
-    - uses: montudor/action-zip@v1
-      with:
-        working-directory: src/DocToIdoit/bin/publish-win
-        args: zip -qq -r DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip *
+    - name: zip windows files
+      run: |
+        cd src/DocToIdoit/bin/publish-win
+        zip -r DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip *
     - uses: actions/upload-artifact@v3
       with:
         path: DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
         name: DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
     - name: Build Linux-x64
       run: dotnet publish src/DocToIdoit/DocToIdoit.csproj -p:PublishProfile=Linux-X64
-    - uses: montudor/action-zip@v1
-      with:
-        working-directory: src/DocToIdoit/bin/publish-linux
-        args: zip -qq -r DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip *
+    - name: zip linux files
+      run: |
+        cd src/DocToIdoit/bin/publish-linux
+        zip -r DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip *
     - uses: actions/upload-artifact@v3
       with:
         path: DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
