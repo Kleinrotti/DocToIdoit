@@ -19,12 +19,10 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - uses: nuget/setup-nuget@v1
-      with: 
-        nuget-version: '5.x'
-    - run: nuget restore src/DocToIdoit.sln
+    - name: Restore dependencies
+      run: dotnet restore src/DocToIdoit/DocToIdoit.csproj
     - name: Build Windows-x64
-      run: dotnet publish src/DocToIdoit.sln --framework net6.0 --configuration Release -p:PublishProfile=Windows-X64
+      run: dotnet publish src/DocToIdoit/DocToIdoit.csproj -p:PublishProfile=Windows-X64
     - uses: montudor/action-zip@v1
       with:
         args: zip -qq -r DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-win
@@ -32,7 +30,7 @@ jobs:
       with:
         name: DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
     - name: Build Linux-x64
-      run: dotnet publish src/DocToIdoit.sln --framework net6.0 --configuration Release -p:PublishProfile=Linux-X64
+      run: dotnet publish src/DocToIdoit/DocToIdoit.csproj -p:PublishProfile=Linux-X64
     - uses: montudor/action-zip@v1
       with:
         args: zip -qq -r DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip src/DocToIdoit/bin/publish-linux
