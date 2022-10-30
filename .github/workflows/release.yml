@@ -46,9 +46,17 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set version env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Download articacts
+      - uses: actions/download-artifact@v3
+        with:
+          name: DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
+      - uses: actions/download-artifact@v3
+        with:
+          name: DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
       - name: Release files
         uses: softprops/action-gh-release@v1
         with:
+          fail_on_unmatched_files: true
           files: |
             DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
             DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
