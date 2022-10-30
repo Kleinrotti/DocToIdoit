@@ -29,7 +29,7 @@ jobs:
         zip -r DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip *
     - uses: actions/upload-artifact@v3
       with:
-        path: DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
+        path: src/DocToIdoit/bin/publish-win/DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
         name: DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
     - name: Build Linux-x64
       run: dotnet publish src/DocToIdoit/DocToIdoit.csproj -p:PublishProfile=Linux-X64
@@ -39,7 +39,7 @@ jobs:
         zip -r DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip *
     - uses: actions/upload-artifact@v3
       with:
-        path: DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
+        path: src/DocToIdoit/bin/publish-linux/DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
         name: DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
   release:
     needs: build
