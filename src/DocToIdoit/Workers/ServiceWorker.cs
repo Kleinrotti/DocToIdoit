@@ -46,7 +46,7 @@ namespace DocToIdoit
             _productOptionsMonitor = productOptionsMonitor;
             _timer = new Timer(new TimerCallback(CheckForFiles));
             _timer.Change(1000, _configuration.GetValue<int>("Watcher:ScanInterval"));
-            Installation.LicenseKey = _configuration["Ocr:License"];
+            Installation.LicenseKey = _configuration["IronOcr.LicenseKey"];
             _logger.LogInformation("IronOCR license is valid: " + Installation.IsLicensed);
         }
 
