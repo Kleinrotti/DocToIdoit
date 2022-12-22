@@ -1,0 +1,16 @@
+version: "3.4"
+
+services:
+  doctoidoit:
+    image: doctoidoit
+    volumes: 
+      - D:\\ocr\\scan:/ocr/scan #scan folder for new pdf files from host system
+      - processing:/ocr/processing #folder for files which are beeing processed
+      - errors:/ocr/errors #folder for files where errors occurred
+      - results:/ocr/results #folder for the extracted ocr text per file
+      - D:\\ocr\\CustomSettings\\appsettings.json:/app/appsettings.json #set your custom appsettings.json from host system here
+
+volumes:
+  processing:
+  errors:
+  results:
