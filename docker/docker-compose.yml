@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
   doctoidoit:
-    image: doctoidoit
+    image: kleinrotti/doctoidoit:latest
     volumes: 
       - D:\\ocr\\scan:/ocr/scan #scan folder for new pdf files from host system
       - processing:/ocr/processing #folder for files which are beeing processed
