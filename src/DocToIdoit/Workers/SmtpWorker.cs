@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Net.Mail;
+using MailKit.Net.Smtp;
+using MailKit;
+using MimeKit;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace DocToIdoit
 {
@@ -19,35 +22,55 @@ namespace DocToIdoit
         {
             _logger = logger;
             _configuration = configuration;
-            _smtpClient = new SmtpClient
-            {
-                Host = _configuration["Smtp:Server"],
-                Port = _configuration.GetValue<int>("Smtp:Port")
-            };
+            _smtpClient = new SmtpClient();
+            _smtpClient.MessageSent += _smtpClient_MessageSent;
             _logger.LogDebug("SmtpWorker initialized");
         }
 
-        public async Task SendAsync(string body, Attachment attachment1 = null, Attachment attachment2 = null)
+        private void _smtpClient_MessageSent(object sender, MessageSentEventArgs e)
         {
-            using var message = new MailMessage(_configuration["Smtp:From"], _configuration["Smtp:To"])
+            _logger.LogDebug($"Mail sent successfully. Server response: {e.Response}");
+        }
+
+        public async Task SendAsync(string body, IEnumerable<string> attachments = null)
+        {
+            var message = new MimeMessage();
+            message.Subject = _configuration["Smtp:Subject"];
+            message.From.Add(new MailboxAddress("", _configuration["Smtp:From"]));
+            message.To.Add(new MailboxAddress("", _configuration["Smtp:To"]));
+            var builder = new BodyBuilder();
+            builder.TextBody = body;
+            if (attachments != null)
             {
-                Subject = _configuration["Smtp:Subject"],
-                Body = body,
-            };
-            message.Attachments.Add(attachment1);
-            message.Attachments.Add(attachment2);
+                foreach (var a in attachments)
+                {
+                    try
+                    {
+                        await builder.Attachments.AddAsync(a);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Failed to add message attachment {a}");
+                    }
+                }
+            }
+            message.Body = builder.ToMessageBody();
             try
             {
-                await _smtpClient.SendMailAsync(message);
+                await _smtpClient.ConnectAsync(_configuration["Smtp:Server"],
+                                                    _configuration.GetValue<int>("Smtp:Port"));
+                await _smtpClient.SendAsync(message);
+                await _smtpClient.DisconnectAsync(true);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send E-mail");
+                _logger.LogError(ex, "Failed to send e-mail");
             }
         }
 
         public void Dispose()
         {
+            _smtpClient.MessageSent -= _smtpClient_MessageSent;
             _smtpClient.Dispose();
         }
     }

@@ -302,10 +302,10 @@ namespace DocToIdoit
             {
                 using var scope = _services.CreateScope();
                 using var smtpWorker = scope.ServiceProvider.GetRequiredService<ISmtpWorker>();
+                var attachments = new List<string>() { string.Format(_configuration["Logging:File:Path"], DateTime.UtcNow), filePath };
                 //send email with current log file as attachment
                 await smtpWorker.SendAsync($"While processing file {fileName}, errors occurred.\nCheck the log file for more information.",
-                    new Attachment(string.Format(_configuration["Logging:File:Path"], DateTime.UtcNow)),
-                    new Attachment(filePath));
+                    attachments);
             }
             File.Move(filePath, _configuration["Watcher:ErrorScanPath"] + Path.GetFileName(fileName), true);
             _logger.LogInformation($"Moved file {fileName} to error directory");
