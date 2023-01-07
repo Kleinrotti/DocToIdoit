@@ -57,6 +57,8 @@ namespace DocToIdoit
             message.Body = builder.ToMessageBody();
             try
             {
+                if (_configuration["Smtp:Username"] != string.Empty && _configuration["Smtp:Password"] != string.Empty)
+                    await _smtpClient.AuthenticateAsync(_configuration["Smtp:Username"], _configuration["Smtp:Password"]);
                 await _smtpClient.ConnectAsync(_configuration["Smtp:Server"],
                                                     _configuration.GetValue<int>("Smtp:Port"));
                 await _smtpClient.SendAsync(message);
