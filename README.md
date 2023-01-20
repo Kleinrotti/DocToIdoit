@@ -81,6 +81,8 @@ If you have large PDFs with many pages or if you turn on parallel processing, en
 | Smtp.Subject |  Subject of the email | No | - | string |
 | Smtp.From |  Sender of the email | No | - | string |
 | Smtp.To |  Recipient of the email | No | - | string |
+| Smtp.Username |  Username for Smtp server | No | - | string |
+| Smtp.Password |  Password for Smtp server | No | - | string |
 | Ocr.Scale |  Target scaling of the PDF | Yes | 300 | int |
 | Ocr.Deskew |  Correct rotation of the PDF | Yes | True | bool |
 | Ocr.DeliveryNoteDetectionRegex |  Regex to detect the delivery note number | Yes | (LIEF).\\d* | string |
