@@ -6,7 +6,7 @@ name: create release
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "*.*.*"
 
 jobs:
   build:
@@ -57,6 +57,7 @@ jobs:
       - name: Release files
         uses: softprops/action-gh-release@v1
         with:
+          generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
             DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
