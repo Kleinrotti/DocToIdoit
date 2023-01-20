@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
@@ -12,10 +13,9 @@ namespace DocToIdoit
         /// <summary>
         /// Send an E-mail.
         /// </summary>
-        /// <param name="body"></param>
-        /// <param name="attachment"></param>
-        /// <param name="attachment2"></param>
+        /// <param name="body">Message body</param>
+        /// <param name="attachments">Paths to files which should be attached</param>
         /// <returns></returns>
-        Task SendAsync(string body, Attachment attachment = null, Attachment attachment2 = null);
+        Task SendAsync(string body, IEnumerable<string> attachments);
     }
 }
