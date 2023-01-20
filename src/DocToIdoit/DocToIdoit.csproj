@@ -6,6 +6,7 @@
     <Authors>Kleinrotti</Authors>
     <Copyright>Kleinrotti</Copyright>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
