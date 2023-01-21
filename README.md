@@ -40,6 +40,7 @@ DocToIdoit uses [IronOCR](https://ironsoftware.com/csharp/ocr) as ocr engine. If
  - Install docker and docker-compose
  - Get the docker-compose [file](https://github.com/Kleinrotti/DocToIdoit/blob/main/docker/docker-compose.yml)
  - Edit the docker-compose file as your needs, set your volume paths for the input scan folder and your [appsettings.json](https://github.com/Kleinrotti/DocToIdoit/blob/main/src/DocToIdoit/appsettings.json)
+ - Replace ``latest`` in ``kleinrotti/doctoidoit:latest`` with a version you want to use
  - Run ``docker-compose -p doctoidoit up -d``
 
 > ## Installation (bare metal on Ubuntu or Debian)
