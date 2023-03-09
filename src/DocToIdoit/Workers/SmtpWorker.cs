@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using MailKit;
 using MailKit.Net.Smtp;
-using MailKit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MimeKit;
-using System.Threading.Tasks;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DocToIdoit
 {
@@ -60,7 +60,7 @@ namespace DocToIdoit
                 if (_configuration["Smtp:Username"] != string.Empty && _configuration["Smtp:Password"] != string.Empty)
                     await _smtpClient.AuthenticateAsync(_configuration["Smtp:Username"], _configuration["Smtp:Password"]);
                 await _smtpClient.ConnectAsync(_configuration["Smtp:Server"],
-                                                    _configuration.GetValue<int>("Smtp:Port"));
+                                                    _configuration.GetValue<int>("Smtp:Port"), _configuration.GetValue<bool>("Smtp:SSL"));
                 await _smtpClient.SendAsync(message);
                 await _smtpClient.DisconnectAsync(true);
             }
