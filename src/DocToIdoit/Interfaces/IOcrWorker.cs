@@ -1,8 +1,6 @@
 ﻿using IronOcr;
 using IronOcr.Events;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
 
 namespace DocToIdoit
@@ -15,7 +13,7 @@ namespace DocToIdoit
         /// <summary>
         /// Progress of the OCR process.
         /// </summary>
-        event EventHandler<OcrProgresEventsArgs> ProgressChanged;
+        event EventHandler<OcrProgressEventsArgs> ProgressChanged;
 
         /// <summary>
         /// Start OCR process of a file.

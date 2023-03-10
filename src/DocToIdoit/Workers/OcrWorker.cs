@@ -16,7 +16,7 @@ namespace DocToIdoit
         private IronTesseract _ocrEngine;
         private readonly IConfiguration _configuration;
 
-        public event EventHandler<OcrProgresEventsArgs> ProgressChanged;
+        public event EventHandler<OcrProgressEventsArgs> ProgressChanged;
 
         public OcrWorker(ILogger<OcrWorker> logger, IConfiguration configuration)
         {
