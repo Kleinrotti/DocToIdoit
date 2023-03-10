@@ -36,6 +36,10 @@ DocToIdoit uses [IronOCR](https://ironsoftware.com/csharp/ocr) as ocr engine. If
 - PDFs should have least a resolution of 300 dpi
 - PDFs should not be compressed to heavily, the better the quality of the PDF and source document, the more reliable the ocr result.
 
+### Tesseract language file
+The default ocr language is German, if you want to use other languages you need to set a custom language file in the appsettings.json.
+Take a look [here](https://github.com/tesseract-ocr/tessdata)
+
 > ## Installation (Docker)
  - Install docker and docker-compose
  - Get the docker-compose [file](https://github.com/Kleinrotti/DocToIdoit/blob/main/docker/docker-compose.yml)
@@ -84,6 +88,7 @@ If you have large PDFs with many pages or if you turn on parallel processing, en
 | Smtp.To |  Recipient of the email | No | - | string |
 | Smtp.Username |  Username for Smtp server | No | - | string |
 | Smtp.Password |  Password for Smtp server | No | - | string |
+| Smtp.SSL |  Use use SSL for SMTP connection | No | false | bool |
 | Ocr.Scale |  Target scaling of the PDF | Yes | 300 | int |
 | Ocr.Deskew |  Correct rotation of the PDF | Yes | True | bool |
 | Ocr.DeliveryNoteDetectionRegex |  Regex to detect the delivery note number | Yes | (LIEF).\\d* | string |
