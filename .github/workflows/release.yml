@@ -80,5 +80,5 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
-            DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
-            DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
+            DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip/DocToIdoit-win-x64-${{ env.RELEASE_VERSION }}.zip
+            DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip/DocToIdoit-linux-x64-${{ env.RELEASE_VERSION }}.zip
