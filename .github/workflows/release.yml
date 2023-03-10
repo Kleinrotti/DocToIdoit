@@ -50,7 +50,7 @@ jobs:
         context: ./src
         file: ./src/DocToIdoit/Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/doctoidoit:latest,${{ secrets.DOCKER_HUB_USERNAME }}/doctoidoit:{{ env.RELEASE_VERSION }}
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/doctoidoit:latest,${{ secrets.DOCKER_HUB_USERNAME }}/doctoidoit:${{ env.RELEASE_VERSION }}
           
     
     - name: Build Linux-x64
