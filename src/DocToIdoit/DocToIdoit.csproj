@@ -6,7 +6,7 @@
     <Authors>Kleinrotti</Authors>
     <Copyright>Kleinrotti</Copyright>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <Version>1.1.0</Version>
+    <Version>0.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -19,9 +19,9 @@
 
   <ItemGroup>
     <PackageReference Include="IdoitSharp" Version="0.2.0" />
-    <PackageReference Include="IronOcr" Version="2022.12.10830" />
+    <PackageReference Include="IronOcr" Version="2023.1.11644" />
     <PackageReference Include="IronOcr.Languages.German" Version="2020.11.2" />
-    <PackageReference Include="IronOcr.Linux" Version="2022.12.10830" />
+    <PackageReference Include="IronOcr.Linux" Version="2023.1.11644" />
     <PackageReference Include="MailKit" Version="3.4.3" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="6.0.0" />
@@ -30,4 +30,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NReco.Logging.File" Version="1.1.5" />
   </ItemGroup>
+  <ItemGroup>
+  <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+</ItemGroup>
 </Project>
