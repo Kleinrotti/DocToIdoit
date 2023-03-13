@@ -59,7 +59,7 @@ namespace DocToIdoit
             try
             {
                 var socketOptions = SecureSocketOptions.None;
-                if (_configuration.GetValue<bool>("Smtp:SSL") == true)
+                if (_configuration.GetValue<bool>("Smtp:SSL"))
                     socketOptions = SecureSocketOptions.Auto;
                 if (_configuration["Smtp:Username"] != string.Empty && _configuration["Smtp:Password"] != string.Empty)
                     await _smtpClient.AuthenticateAsync(_configuration["Smtp:Username"], _configuration["Smtp:Password"]);

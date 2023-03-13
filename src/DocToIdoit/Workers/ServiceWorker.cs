@@ -40,6 +40,7 @@ namespace DocToIdoit
             IServiceProvider services, IHostLifetime lifetime, IOptionsMonitor<List<Product>> productOptionsMonitor)
         {
             _logger = logger;
+            _logger.LogInformation($"Running DocToIdoit version {GetType().Assembly.GetName().Version.ToString()}");
             _logger.LogInformation("IHostLifetime: {hostLifetime}", lifetime.GetType());
             _configuration = configuration;
             _services = services;
@@ -127,7 +128,6 @@ namespace DocToIdoit
             //check if any products were found
             if (!products.Any())
             {
-                _logger.LogWarning($"Skipping file {fileName} due to previous detection error");
                 OcrToFile(Path.GetFileNameWithoutExtension(path), result.Text);
                 OnServiceError(path);
                 return;
@@ -180,12 +180,13 @@ namespace DocToIdoit
             //loop through all pages of the file
             for (int pIndex = 0; pIndex < pages.Length; pIndex++)
             {
-                //check if the values are valid and exists
-                var dateMatch = new Regex(_configuration["Ocr:DateDetectionRegex"]).Match(ocr.Pages[pIndex].Text);
-                var noteMatch = new Regex(_configuration["Ocr:DeliveryNoteDetectionRegex"]).Match(ocr.Pages[pIndex].Text);
-                var ticketIdMatch = new Regex(_configuration["Ocr:TicketIdDetectionRegex"]).Match(ocr.Pages[pIndex].Text);
+                //check all regex expressions
+                var dateMatch = CheckMultipleRegex(_configuration.GetSection("Ocr:DateDetectionRegex").Get<IEnumerable<string>>(), ocr.Pages[pIndex].Text);
+                var noteMatch = CheckMultipleRegex(_configuration.GetSection("Ocr:DeliveryNoteDetectionRegex").Get<IEnumerable<string>>(), ocr.Pages[pIndex].Text);
+                var ticketIdMatch = CheckMultipleRegex(_configuration.GetSection("Ocr:TicketIdDetectionRegex").Get<IEnumerable<string>>(), ocr.Pages[pIndex].Text);
+
+                var dateFormats = _configuration.GetSection("Ocr:DateFormats").Get<IEnumerable<string>>();
                 string ticketid;
-                var ci = CultureInfo.InvariantCulture;
                 if (!ticketIdMatch.Success)
                 {
                     _logger.LogInformation($"No ticket id detected in ocr page {pIndex + 1}");
@@ -196,17 +197,19 @@ namespace DocToIdoit
                 if (!dateMatch.Success)
                 {
                     _logger.LogError($"Date not detected in ocr page {pIndex + 1}");
-                    continue; //skip this page
+                    continue;
                 }
-                if (!DateTime.TryParseExact(dateMatch.Value, _configuration["Ocr:DateFormat"], ci, DateTimeStyles.None, out var parsedDate))
+                var parsedDate = TryParseMultipleDateTimeFormats(dateFormats, dateMatch.Value);
+                if (parsedDate == null)
                 {
                     _logger.LogError($"Date failed to parse in ocr page {pIndex + 1}");
                     continue;
                 }
+
                 if (!noteMatch.Success)
                 {
                     _logger.LogError($"Delivery note not detected in ocr page {pIndex + 1}");
-                    continue; //skip this page
+                    continue;
                 }
                 var count = 0;
                 var serialIndicators = _configuration.GetSection("Ocr:SerialIndicators").Get<string[]>();
@@ -260,7 +263,7 @@ namespace DocToIdoit
                             count++;
                             var p = new Product
                             {
-                                OrderDate = parsedDate,
+                                OrderDate = (DateTime)parsedDate,
                                 DeliveryNote = noteMatch.Value,
                                 SerialNumer = s,
                                 Type = v.Type,
@@ -310,6 +313,31 @@ namespace DocToIdoit
             }
             File.Move(filePath, _configuration["Watcher:ErrorScanPath"] + Path.GetFileName(fileName), true);
             _logger.LogInformation($"Moved file {fileName} to error directory");
+        }
+
+        internal Match CheckMultipleRegex(IEnumerable<string> regexList, string text)
+        {
+            foreach (var reg in regexList)
+            {
+                var match = new Regex(reg).Match(text);
+                if (match.Success)
+                {
+                    return match;
+                }
+            }
+            return Match.Empty;
+        }
+
+        internal DateTime? TryParseMultipleDateTimeFormats(IEnumerable<string> formats, string date)
+        {
+            foreach (var fmt in formats)
+            {
+                if (DateTime.TryParseExact(date, fmt, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+                {
+                    return parsedDate;
+                }
+            }
+            return null;
         }
 
         public override void Dispose()
