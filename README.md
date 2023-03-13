@@ -94,6 +94,7 @@ If you have large PDFs with many pages or if you turn on parallel processing, en
 | Ocr.DeliveryNoteDetectionRegex |  Regex to detect the delivery note number | Yes | (LIEF).\\d* | string |
 | Ocr.DateDetectionRegex |  Regex to detect the date | Yes | \\d{2}.\\d{2}.\\d{4} | string |
 | Ocr.TicketIdDetectionRegex |  Regex to detect the ticket id | No | (?<=Ticket# )[^.\\s]* | string |
+| Ocr.DateFormat |  Format of the dates | Yes | dd.MM.yyyy | string |
 | Ocr.SerialDelimiter |  Delimeter between serial numbers | Yes | , | string |
 | Ocr.SerialIndicators |  Indicators to detect the lines where serial number are listed | Yes | S/N: | string[] |
 | Ocr.SupportedProducts |  Array of supported products (see matrix below) | No | - | object[] |

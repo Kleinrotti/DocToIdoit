@@ -7,9 +7,9 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,8 +46,8 @@ namespace DocToIdoit
             _productOptionsMonitor = productOptionsMonitor;
             _timer = new Timer(new TimerCallback(CheckForFiles));
             _timer.Change(1000, _configuration.GetValue<int>("Watcher:ScanInterval"));
-            Installation.LicenseKey = _configuration["IronOcr.LicenseKey"];
-            _logger.LogInformation("IronOCR license is valid: " + Installation.IsLicensed);
+            License.LicenseKey = _configuration["IronOcr.LicenseKey"];
+            _logger.LogInformation("IronOCR license is valid: " + License.IsLicensed);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -171,7 +171,7 @@ namespace DocToIdoit
         /// </summary>
         /// <param name="ocr"></param>
         /// <returns>An <see cref="IList{T}"/> with all extracted products.</returns>
-        private IList<Product> ExtractProducts(OcrResult ocr)
+        internal IList<Product> ExtractProducts(OcrResult ocr)
         {
             var list = new List<Product>();
             var supportedItems = _productOptionsMonitor.CurrentValue;
@@ -185,6 +185,7 @@ namespace DocToIdoit
                 var noteMatch = new Regex(_configuration["Ocr:DeliveryNoteDetectionRegex"]).Match(ocr.Pages[pIndex].Text);
                 var ticketIdMatch = new Regex(_configuration["Ocr:TicketIdDetectionRegex"]).Match(ocr.Pages[pIndex].Text);
                 string ticketid;
+                var ci = CultureInfo.InvariantCulture;
                 if (!ticketIdMatch.Success)
                 {
                     _logger.LogInformation($"No ticket id detected in ocr page {pIndex + 1}");
@@ -194,17 +195,17 @@ namespace DocToIdoit
                     ticketid = ticketIdMatch.Value;
                 if (!dateMatch.Success)
                 {
-                    _logger.LogWarning($"Date not detected in ocr page {pIndex + 1}");
+                    _logger.LogError($"Date not detected in ocr page {pIndex + 1}");
                     continue; //skip this page
                 }
-                if (!DateTime.TryParse(dateMatch.Value, out var parsedDate))
+                if (!DateTime.TryParseExact(dateMatch.Value, _configuration["Ocr:DateFormat"], ci, DateTimeStyles.None, out var parsedDate))
                 {
-                    _logger.LogWarning($"Date failed to parse in ocr page {pIndex + 1}");
+                    _logger.LogError($"Date failed to parse in ocr page {pIndex + 1}");
                     continue;
                 }
                 if (!noteMatch.Success)
                 {
-                    _logger.LogWarning($"Delivery note not detected in ocr page {pIndex + 1}");
+                    _logger.LogError($"Delivery note not detected in ocr page {pIndex + 1}");
                     continue; //skip this page
                 }
                 var count = 0;
