@@ -1,5 +1,6 @@
 ﻿using MailKit;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MimeKit;
@@ -57,10 +58,13 @@ namespace DocToIdoit
             message.Body = builder.ToMessageBody();
             try
             {
+                var socketOptions = SecureSocketOptions.None;
+                if (_configuration.GetValue<bool>("Smtp:SSL") == true)
+                    socketOptions = SecureSocketOptions.Auto;
                 if (_configuration["Smtp:Username"] != string.Empty && _configuration["Smtp:Password"] != string.Empty)
                     await _smtpClient.AuthenticateAsync(_configuration["Smtp:Username"], _configuration["Smtp:Password"]);
                 await _smtpClient.ConnectAsync(_configuration["Smtp:Server"],
-                                                    _configuration.GetValue<int>("Smtp:Port"), _configuration.GetValue<bool>("Smtp:SSL"));
+                                                    _configuration.GetValue<int>("Smtp:Port"), socketOptions);
                 await _smtpClient.SendAsync(message);
                 await _smtpClient.DisconnectAsync(true);
             }
