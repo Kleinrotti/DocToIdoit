@@ -40,14 +40,13 @@ namespace DocToIdoit
             IServiceProvider services, IHostLifetime lifetime, IOptionsMonitor<List<Product>> productOptionsMonitor)
         {
             _logger = logger;
-            _logger.LogInformation($"Running DocToIdoit version {GetType().Assembly.GetName().Version.ToString()}");
+            _logger.LogInformation($"Running DocToIdoit version {GetType().Assembly.GetName().Version}");
             _logger.LogInformation("IHostLifetime: {hostLifetime}", lifetime.GetType());
             _configuration = configuration;
             _services = services;
             _productOptionsMonitor = productOptionsMonitor;
             _timer = new Timer(new TimerCallback(CheckForFiles));
             _timer.Change(1000, _configuration.GetValue<int>("Watcher:ScanInterval"));
-            License.LicenseKey = _configuration["IronOcr.LicenseKey"];
             _logger.LogInformation("IronOCR license is valid: " + License.IsLicensed);
         }
 
