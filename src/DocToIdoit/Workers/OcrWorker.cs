@@ -23,9 +23,10 @@ namespace DocToIdoit
             _logger = logger;
             _configuration = configuration;
             _ocrEngine = new IronTesseract();
+            var language = _configuration.GetValue<OcrLanguage>("Ocr:Language");
             var languageFile = _configuration.GetValue<string>("Ocr:CustomLanguageFile");
             if (languageFile == string.Empty)
-                _ocrEngine.Language = OcrLanguage.GermanBest;
+                _ocrEngine.Language = language;
             else
             {
                 _logger.LogInformation($"Setting custom language file to {languageFile}");
